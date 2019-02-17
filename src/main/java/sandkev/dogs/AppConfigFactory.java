@@ -1,19 +1,9 @@
 package sandkev.dogs;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.dbcp.BasicDataSource;
 import org.flywaydb.core.Flyway;
-import org.yaml.snakeyaml.Yaml;
 
-import javax.sql.DataSource;
+import java.util.Map;
 
 /**
  * Created by kevsa on 17/02/2019.
