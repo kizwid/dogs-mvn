@@ -1,0 +1,16 @@
+#spring:
+#  jpa:
+#    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+#    hibernate:
+#      ddl-auto: update
+
+flyway:
+  url: jdbc:mysql://localhost:3306/dogs
+  user: root
+  password: admin
+
+datasource:
+  url: jdbc:mysql://localhost:3306/dogs
+  username: root
+  password: admin
+  driver-class-name: "com.mysql.jdbc.Driver"
