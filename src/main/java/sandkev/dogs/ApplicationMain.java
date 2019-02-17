@@ -19,6 +19,10 @@ public class ApplicationMain {
         logger.info("hello");
 
         MockDogProvider dogProvider = new MockDogProvider();
+
+        //TODO: connect to real database and crud some dogs
+        //DogsRepository dogsRepository = new D
+
         DogsController dogsController = DogsController.of(dogProvider);
         dogsController.register();
 
