@@ -1,22 +1,30 @@
-create table EVENT (
-    event_id bigint AUTO_INCREMENT primary key
-    ,env varchar(10) not null
-    ,region varchar(50) not null
-    ,domain varchar(50) not null
-    ,event_type varchar(50) not null
-    ,key_type varchar(50) not null
-    ,key_name varchar(50) not null
-    ,timestamp timestamp not null
+create role read_only;
+create role full_access;
+
+create table BATCH (
+    batch_id bigint AUTO_INCREMENT primary key
+    ,name varchar(10) not null
+    ,market_group varchar(50) not null
+    ,market_region varchar(50) not null
+    ,market_domain varchar(50) not null
+    ,valuation_profile varchar(50) not null
+    ,business varchar(50) not null
+);
+
+create table USER (
+    user_id int AUTO_INCREMENT primary key
+    ,name varchar(100) not null
 );
 
 create table WORKFLOW (
     workflow_id bigint AUTO_INCREMENT primary key
-    ,event_id bigint not null
-    ,name varchar(255)
+    ,workflow_guid VARBINARY(30) not null
+    ,batch_id bigint not null
     ,start_time date
-    ,creation_user bigint
+    ,end_time date
+    ,user_id int
 );
-alter table WORKFLOW add constraint fk_event_id foreign key (event_id) references EVENT(event_id);
+alter table WORKFLOW add constraint fk_event_id foreign key (batch_id) references BATCH(batch_id);
 
 create table TASK_TYPE (
     task_type_id int AUTO_INCREMENT primary key
@@ -41,3 +49,4 @@ create table WORKFLOW_TASK (
 );
 alter table WORKFLOW_TASK add constraint fk_wt_task_id foreign key (task_id) references TASK(task_id);
 alter table WORKFLOW_TASK add constraint fk_wt_workflow_id foreign key (workflow_id) references WORKFLOW(workflow_id);
+

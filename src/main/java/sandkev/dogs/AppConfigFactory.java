@@ -29,7 +29,8 @@ public class AppConfigFactory {
 
         Flyway flyway = new Flyway();
         flyway.setDataSource(ds);
-        //flyway.migrate();
+        flyway.setBaselineOnMigrate(true);
+        flyway.migrate();
 
         builder.dataSource(ds);
         return builder.build();
