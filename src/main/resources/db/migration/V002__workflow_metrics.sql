@@ -44,6 +44,8 @@ create table WORKFLOW_TASK (
     workflow_task_id int AUTO_INCREMENT primary key
     ,workflow_id bigint not null
     ,task_id int not null
+    ,start_time date
+    ,end_time date
     ,parent int
     ,ordinal int
 );
