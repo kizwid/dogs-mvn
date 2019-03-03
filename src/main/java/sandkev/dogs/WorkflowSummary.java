@@ -1,6 +1,7 @@
 package sandkev.dogs;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.Entity;
@@ -11,11 +12,15 @@ import java.util.Date;
 @Entity
 @Data
 @AllArgsConstructor(staticName = "of")
+@Builder
 public class WorkflowSummary {
     @Id
     String workflowId;
-    Date startTime;
-    Date endTime;
+    Batch batch;
+    int valueDate;
+    String status;
+    long startTime;
+    long endTime;
     String name;
     int runningTaskCount;
     int completedTaskCount;
