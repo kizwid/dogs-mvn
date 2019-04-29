@@ -1,3 +1,5 @@
+https://dzone.com/articles/spring-boot-rest-service-1
+
 bin\mysqld --defaults-file=my.ini --initialize-insecure --console --user=mysql
 
 D:\tools\mysql\mysql-8.0.15-winx64>

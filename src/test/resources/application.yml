@@ -1,0 +1,17 @@
+#spring:
+#  jpa:
+#    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+#    hibernate:
+#      ddl-auto: update
+
+flyway:
+  url: jdbc:hsqldb:mem:dogs
+  user: sa
+  password:
+
+datasource:
+  url: jdbc:hsqldb:mem:dogs
+  username: sa
+  password:
+  driver-class-name: "org.h2.Driver"
+

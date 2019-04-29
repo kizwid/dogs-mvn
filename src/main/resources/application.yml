@@ -4,13 +4,24 @@
 #    hibernate:
 #      ddl-auto: update
 
+#flyway:
+#  url: jdbc:mysql://localhost:3306/dogs
+#  user: root
+#  password: admin
+#
+#datasource:
+#  url: jdbc:mysql://localhost:3306/dogs
+#  username: root
+#  password: admin
+#  driver-class-name: "com.mysql.jdbc.Driver"
+
 flyway:
-  url: jdbc:mysql://localhost:3306/dogs
-  user: root
-  password: admin
+  url: jdbc:h2:mem:dogs
+  user: sa
+  password:
 
 datasource:
-  url: jdbc:mysql://localhost:3306/dogs
-  username: root
-  password: admin
-  driver-class-name: "com.mysql.jdbc.Driver"
+  url: jdbc:h2:mem:dogs
+  username: sa
+  password:
+  driver-class-name: "org.h2.Driver"
