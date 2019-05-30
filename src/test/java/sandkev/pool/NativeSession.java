@@ -23,7 +23,9 @@ public class NativeSession implements Session {
 
     @Override
     public void close() throws Exception {
-
+        //waitUntilInactive(0);
+        //destroyWhenInactive();
+        System.out.println("Destroyed native session" + toString());
     }
 
     @Override
@@ -36,8 +38,4 @@ public class NativeSession implements Session {
         return invocationCount.incrementAndGet();
     }
 
-    @Override
-    public void destroy() {
-        System.out.println("Destroyed native session" + toString());
-    }
 }

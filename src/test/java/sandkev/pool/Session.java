@@ -6,5 +6,4 @@ package sandkev.pool;
 public interface Session extends AutoCloseable, Identifiable {
     int getInvocationCount();
     int submit();
-    void destroy();
 }

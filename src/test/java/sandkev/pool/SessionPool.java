@@ -14,13 +14,13 @@ public class SessionPool {
     private static class PooledSession implements Session {
 
         private final Session session;
-        private final LinkedBlockingQueue<Session> pool;
-        private final LinkedBlockingQueue<Session> expired;
-        private final Set<Session> leased;
+        private final LinkedBlockingQueue<PooledSession> pool;
+        private final LinkedBlockingQueue<PooledSession> expired;
+        private final Set<PooledSession> leased;
         private final long expiryTime;
         private final long maxInvocationCount;
 
-        public PooledSession(Session session, LinkedBlockingQueue<Session> pool, Set<Session> leased, LinkedBlockingQueue<Session> expired, long expiryTime, int maxInvocationCount) {
+        private PooledSession(Session session, LinkedBlockingQueue<PooledSession> pool, Set<PooledSession> leased, LinkedBlockingQueue<PooledSession> expired, long expiryTime, int maxInvocationCount) {
             this.session = session;
             this.leased = leased;
             this.expired = expired;
@@ -40,7 +40,7 @@ public class SessionPool {
             leased.remove(this);
             if(getInvocationCount() >= maxInvocationCount) {
                 expired.offer(this);
-            } else if(System.currentTimeMillis() < expiryTime){
+            } else if(System.currentTimeMillis() >= expiryTime){
                 expired.offer(this);
             } else {
                 pool.offer(this);
@@ -56,17 +56,11 @@ public class SessionPool {
         public int submit() {
             return session.submit();
         }
-
-        @Override
-        public void destroy() {
-            session.destroy();
-        }
     }
 
-
-    private final LinkedBlockingQueue<Session> pool = new LinkedBlockingQueue<>();
-    private final LinkedBlockingQueue<Session> expired = new LinkedBlockingQueue<>();
-    private final Set<Session> leased = Sets.newConcurrentHashSet();
+    private final LinkedBlockingQueue<PooledSession> pool = new LinkedBlockingQueue<>();
+    private final LinkedBlockingQueue<PooledSession> expired = new LinkedBlockingQueue<>();
+    private final Set<PooledSession> leased = Sets.newConcurrentHashSet();
     private final int maxSize;
     private final int maxInvocationCount;
     private final int timeToLiveMinutes;
@@ -79,21 +73,34 @@ public class SessionPool {
         this.factory = factory;
     }
 
-    public Session lease() throws InterruptedException {
-
-        if(pool.size() < maxSize){
-            //add new items to the pool
-            return new PooledSession(factory.create(),
-                    pool, leased, expired,
-                    System.currentTimeMillis() +  TimeUnit.MINUTES.toMillis(timeToLiveMinutes),
-                    maxInvocationCount);
+    public Session lease() throws Exception {
+        if(getSize() < maxSize){
+            return createSession();
         }else {
-            Session session = pool.take();
+            return takeAndValidate();
+        }
+    }
+
+    private Session takeAndValidate() throws Exception {
+        PooledSession session = pool.take();
+        if(System.currentTimeMillis() >= session.expiryTime){
+            session.session.close();
+            return lease();
+        }else {
             leased.add(session);
-            session.destroy();
             return session;
         }
+    }
 
+    private Session createSession() {
+        return new PooledSession(factory.create(),
+                pool, leased, expired,
+                System.currentTimeMillis() +  TimeUnit.MINUTES.toMillis(timeToLiveMinutes),
+                maxInvocationCount);
+    }
+
+    public int getSize() {
+        return pool.size() + leased.size();
     }
 
 }
