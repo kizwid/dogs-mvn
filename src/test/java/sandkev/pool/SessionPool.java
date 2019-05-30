@@ -74,7 +74,10 @@ public class SessionPool {
     }
 
     public Session lease() throws Exception {
-        if(getSize() < maxSize){
+        PooledSession session = pool.poll();
+        if (session!=null){
+            return validate(session);
+        }else if(getSize() < maxSize){
             return createSession();
         }else {
             return takeAndValidate();
@@ -82,7 +85,10 @@ public class SessionPool {
     }
 
     private Session takeAndValidate() throws Exception {
-        PooledSession session = pool.take();
+        return validate(pool.take());
+    }
+
+    private Session validate(PooledSession session) throws Exception {
         if(System.currentTimeMillis() >= session.expiryTime){
             session.session.close();
             return lease();

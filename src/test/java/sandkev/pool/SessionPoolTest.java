@@ -19,42 +19,38 @@ public class SessionPoolTest {
         NativeSession nativeSession = new NativeSession();
         NativeSessionFactory factory = mock(NativeSessionFactory.class);
         when(factory.create()).thenReturn(nativeSession);
-        int maxSize = 10;
-        SessionPool sessionPool = new SessionPool(maxSize, (maxSize * 2)+1, 1, factory);
+        int maxSize = 5;
+        int maxInvocationCount = 15;
+        SessionPool sessionPool = new SessionPool(maxSize, maxInvocationCount, 1, factory);
 
         assertEquals(0, sessionPool.getSize());
 
-        //create the 1st 10
-        for(int n = 1; n < 11; n++){
+        //reuse the available session until it is spent
+        for(int n = 1; n < maxInvocationCount + 1; n++){
             Session leasedSession = sessionPool.lease();
 
-            verify(factory, times(Math.min(maxSize, n))).create();
-            assertEquals(n, sessionPool.getSize());
+            verify(factory, times(1)).create();
+            assertEquals(1, sessionPool.getSize());
 
             leasedSession.submit();
             assertEquals(n, nativeSession.getInvocationCount());
 
             leasedSession.close();
-            assertEquals(n, sessionPool.getSize());
-            //reset(factory);
+            if(n==maxInvocationCount){
+                assertEquals(0, sessionPool.getSize());
+            }else {
+                assertEquals(1, sessionPool.getSize());
+            }
         }
 
-        //there after, recycle from the pool
-        for(int n = 1; n < maxSize + 1; n++){
-            Session leasedSession = sessionPool.lease();
-
-            verify(factory, times(maxSize)).create();
-            assertEquals(maxSize, sessionPool.getSize());
-
-            leasedSession.submit();
-            assertEquals(maxSize+n, nativeSession.getInvocationCount());
-
-            leasedSession.close();
-            assertEquals(maxSize, sessionPool.getSize());
-            //reset(factory);
-        }
-
-        //then create again after 1st set expire due to max invocation
+        //the next lease will add a fresh pooledSession
+        nativeSession = new NativeSession();
+        when(factory.create()).thenReturn(nativeSession);
+        assertEquals(0, sessionPool.getSize());
+        Session leasedSession = sessionPool.lease();
+        verify(factory, times(2)).create();
+        leasedSession.close();
+        assertEquals(1, sessionPool.getSize());
 
 
     }
