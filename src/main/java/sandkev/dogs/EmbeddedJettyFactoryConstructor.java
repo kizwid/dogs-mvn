@@ -12,7 +12,6 @@ public class EmbeddedJettyFactoryConstructor {
 
     EmbeddedJettyFactory create() {
         EmbeddedJettyServerFactory embeddedJettyServerFactory = new EmbeddedJettyServerFactory(this);
-
         return new EmbeddedJettyFactory(embeddedJettyServerFactory);
     }
 

@@ -26,6 +26,7 @@ public class ApplicationMain {
         DogsController dogsController = DogsController.of(dogProvider);
         dogsController.register();
 
+        //http://localhost:4567/dogs/2
 
     }
 
