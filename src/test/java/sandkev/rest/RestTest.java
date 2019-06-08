@@ -39,6 +39,8 @@ public class RestTest {
 
         //for /f "tokens=4" %i in ('netstat -an ^|findstr "1818"') DO (set /A cnt=cnt+1)
         //netstat -an|grep 1818|awk '{print $4}'|sort|uniq -c
+        //netstat -an | awk '$1 ~/TCP/ && $3~/127/ {print $4}'|sort|uniq -c
+        //D:\tools\cygwin\bin\bash.exe --login -i -c "netstat -an | awk '$1 ~/TCP/ && $3~/127/ {print $4}'|sort|uniq -c"
         //D:\tools\cygwin\bin\bash.exe --login -i -c "netstat -an|grep 1818|awk '{print $4}'|sort|uniq -c"
         //$a = netstat -an;$a[3..$a.count] | ConvertFrom-String | select p2,p3,p4,p5|where P4 -match '1818'|Select-Object P5|sort|uniq -c
 
